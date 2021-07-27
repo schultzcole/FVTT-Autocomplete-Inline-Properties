@@ -145,6 +145,37 @@ const PACKAGE_CONFIG = [
             }
         ],
     },
+    {
+        packageName: "torgeternity",
+        sheetClasses: [
+            {
+                name: "ActiveEffectConfig",
+                fieldConfigs: [
+                    {
+                        selector: `.tab[data-tab="effects"] .key input[type="text"]`,
+                        defaultPath: "data",
+                        showButton: true,
+                        allowHotkey: true,
+                        dataMode: DATA_MODE.CUSTOM,
+                        customDataGetter: (sheet) => {
+                            if (!(sheet instanceof ActiveEffectConfig)) return;
+                            if (sheet.object.parent instanceof Actor) {
+                                return sheet.object.parent.data;
+                            } else {
+                                const cls = getDocumentClass("Actor");
+                                const data = {};
+                                for(const type of game.system.template.Actor.types) {
+                                    const actorData = new cls({ type, name: "dummy" }).data;
+                                    foundry.utils.mergeObject(data, actorData)
+                                }
+                                return data;
+                            }
+                        },
+                    },
+                ],
+            },
+        ],
+    },
 ];
 
 Hooks.on("init", () => {
